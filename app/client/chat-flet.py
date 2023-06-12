@@ -159,11 +159,122 @@ def main(page):
             cmd.value=""
             page.update()
 
+    cc = ChatClient()
+
     lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
     cmd = ft.TextField(label="Your command")
 
-    page.add(lv)
-    page.add(cmd, ft.ElevatedButton("Send", on_click=btn_click))
+    # page.add(lv)
+    # page.add(cmd, ft.ElevatedButton("Send", on_click=btn_click))
+    
+    page.title = "Chat App"
+    # Menu buttons grid for main menu
+    def menu_buttons():
+        return ft.GridView(
+            spacing=10,
+            runs_count=2,
+            child_aspect_ratio=1.0,
+            max_extent=250,
+            controls= [
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
+                                ft.Icon(name=ft.icons.CHAT, size=100),
+                                ft.Text(value="Private Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=150,
+                        on_click=lambda _: page.go("/chat"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
+                                ft.Icon(name=ft.icons.GROUP, size=100),
+                                ft.Text(value="Group Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=250,
+                        on_click=lambda _: page.go("/chat"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
+                                ft.Icon(name=ft.icons.GROUP_ADD, size=100),
+                                ft.Text(value="Join Group Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=250,
+                        height=250,
+                        on_click=lambda _: page.go("/chat"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
+                                ft.Icon(name=ft.icons.LOGOUT, size=100),
+                                ft.Text(value="Logout", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=250,
+                        height=250,
+                        on_click=lambda _: page.go("/chat"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+            ]
+        )
+    
+    def route_change(route):
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                "/",
+                [
+                    ft.AppBar(title=ft.Text("Chat Gaptek"), bgcolor=ft.colors.SURFACE_VARIANT),
+                    ft.Text(f"Hi, User Gaptek!", style=ft.TextThemeStyle.HEADLINE_LARGE),
+                    menu_buttons()
+                ],
+            )
+        )
+        if page.route == "/chat":
+            page.views.append(
+                ft.View(
+                    "/chat",
+                    [
+                        ft.AppBar(title=ft.Text("Chat"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        lv,
+                        cmd,
+                        ft.ElevatedButton("Send", on_click=btn_click),
+                    ],
+                )
+            )
+        page.update()
+
+    def view_pop(view):
+        page.views.pop()
+        top_view = page.views[-1]
+        page.go(top_view.route)
+
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+    page.go(page.route)
 
 
 if __name__=='__main__':
