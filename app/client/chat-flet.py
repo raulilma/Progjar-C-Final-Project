@@ -181,6 +181,32 @@ def main(page):
             actions_alignment="end",
         )
     
+    def joingroup_dialog():
+        global joingroup
+        
+        def joingroup(e):
+            page.dialog.title=ft.Text(
+                "Join Group", style=ft.TextThemeStyle.TITLE_MEDIUM
+            )
+            page.dialog.actions=[
+                ft.ElevatedButton("Submit!" ,width=100,height=30, on_click=joingroup_click)
+            ]
+            page.dialog.content=ft.Column([groupname, grouppassword], tight=True)
+            page.update()
+
+        page.dialog = ft.AlertDialog(
+            open=not is_login,
+            modal=True,
+            title=ft.Text(
+                "Join Group", style=ft.TextThemeStyle.TITLE_MEDIUM
+            ),
+            content=ft.Column([groupname, grouppassword], tight=True),
+            actions=[
+                ft.ElevatedButton("Submit!",width=100,height=30, on_click=joingroup_click)
+            ],
+            actions_alignment="end",
+        )
+    
     def creategroup_click(e):
         if not groupname.value:
             groupname.error_text = "Enter a valid groupname."
@@ -200,7 +226,7 @@ def main(page):
             newgroup = cc.addgroup(groupname.value, grouppassword.value)
 
             if "Error" in newgroup:
-                groupname.error_text = "Register Failed :("
+                groupname.error_text = "Failed on Creating New Group :("
                 groupname.update()
 
             else:
@@ -211,11 +237,46 @@ def main(page):
                 page.update()
                 page.dialog.open = False
                 
+            page.update()
+            
+    def joingroup_click(e):
+        if not groupname.value:
+            groupname.error_text = "Enter a valid groupname."
+            groupname.update()
+        else :
+            groupname.error_text = ""
+            groupname.update()
+
+        if not grouppassword.value:
+            grouppassword.error_text = "You need to enter the group password."
+            grouppassword.update()
+        else :
+            grouppassword.error_text = ""
+            grouppassword.update()
+
+        if groupname.value != "" and grouppassword.value != "":
+            newgroup = cc.joingroup(groupname.value, grouppassword.value)
+
+            if "Error" in newgroup:
+                groupname.error_text = "Failed on Joining Group :("
+                groupname.update()
+
+            else:
+                groupname.value = ""
+                grouppassword.value = ""
+                groupname.error_text = ""
+                grouppassword.error_text = ""
+                page.update()
+                page.dialog.open = False
                 
             page.update()
     
     def open_creategroup(e):
         creategroup_dialog()
+        page.update()
+        
+    def open_joingroup(e):
+        joingroup_dialog()
         page.update()
         
     def logout_click(e):
@@ -406,7 +467,7 @@ def main(page):
                         ),
                         width=250,
                         height=250,
-                        on_click=lambda _: page.go("/chat"),
+                        on_click=open_joingroup,
                         style=ft.ButtonStyle(
                             shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
                         )
@@ -451,24 +512,6 @@ def main(page):
                         lv,
                         cmd,
                         ft.ElevatedButton("Send", on_click=btn_click),
-                    ],
-                )
-            )
-        elif page.route == "/groupchat":
-            page.views.append(
-                ft.View(
-                    "/groupchat",
-                    [
-                        ft.AppBar(title=ft.Text("Create Group Chat"), bgcolor=ft.colors.SURFACE_VARIANT),
-                        ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True),
-                        ft.TextField(label="Group Name"),
-                        ft.TextField(
-                            label="Password",
-                            password=True,
-                            can_reveal_password=True,
-                            autofocus=True
-                        ),
-                        ft.ElevatedButton("Create", on_click=btn_click),
                     ],
                 )
             )
