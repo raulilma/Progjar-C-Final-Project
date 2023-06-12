@@ -225,7 +225,7 @@ def main(page):
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER
                         ),
                         width=250,
-                        on_click=lambda _: page.go("/chat"),
+                        on_click=lambda _: page.go("/groupchat"),
                         style=ft.ButtonStyle(
                             shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
                         )
