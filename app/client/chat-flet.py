@@ -89,7 +89,7 @@ def main(page):
             country.update()
 
         if username.value != "" and password.value != "" and name.value != "" and country.value != "":
-            login = cc.register(username.value, password.value, name.value, country.value)
+            login = cc.register(name.value, country.value, username.value, password.value)
 
             if "Error" in login:
                 country.error_text = "Register Failed :("
@@ -131,6 +131,13 @@ def main(page):
                 username.error_text = "Username or Password does not match"
                 password.error_text = "Username or Password does not match"
                 username.update()
+            else:
+                username.value = ""
+                password.value = ""
+                username.error_text = ""
+                password.error_text = ""
+                is_login = True
+                page.dialog.open = False
 
             page.update()
 
@@ -164,8 +171,6 @@ def main(page):
 
     # page.add(lv)
     # page.add(cmd, ft.ElevatedButton("Send", on_click=btn_click))
-    
-    page.title = "Chat App"
     # Menu buttons grid for main menu
     def menu_buttons():
         return ft.GridView(

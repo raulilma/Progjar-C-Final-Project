@@ -15,20 +15,21 @@
 -   [x] Basic Operation (Auth, Inbox, dan Send)
 -   [x] Group Chat
 -   [x] Private Chat
--   [x] Group Chat Antar Realm
--   [x] Private Chat Antar Realm
--   [ ] Upload File
--   [ ] User Interface Flet
+-   [x] Group Chat Antar Realm (Flo, Raul)
+-   [x] Private Chat Antar Realm (Flo, Raul)
+-   [ ] Tambah Fitur Auth: Login, Register, dan Logout (Raul)
+-   [ ] Upload File (Flo, Raul)
+-   [ ] User Interface Flet (Labib, Ariel, Sarah, Dup, dan Meisya)
 
 ## List User Interface Flet
--   [ ] Sistem Bubble Chat (Private/Group Chat Menu)
--   [ ] On-Boarding Page
--   [ ] Login Page (Username dan Password)
--   [ ] Register Page (Nama, Username, Negara, dan Password)
--   [ ] Main Menu (Private Chat, Group Chat, Join Group Chat, dan Logout Button)
+-   [ ] Sistem Bubble Chat (Private/Group Chat Menu) -> Labib
+-   [ ] On-Boarding Page -> Ariel
+-   [ ] Login Page (Username dan Password) -> Sarah
+-   [ ] Register Page (Nama, Username, Negara, dan Password) -> Sarah
+-   [ ] Main Menu (Private Chat, Group Chat, Join Group Chat, dan Logout Button) -> Dup
 -   [x] Private Chat Menu
--   [ ] Group Chat Menu
--   [ ] Join Group Menu (Groupname dan Password-nya)
+-   [ ] Group Chat Menu -> Labib
+-   [ ] Join Group Menu (Groupname dan Password-nya) -> Meisya
 
 ## Keterangan
 server 
