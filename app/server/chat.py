@@ -76,7 +76,7 @@ class Chat:
                 password=j[2].strip()
                 logging.warning("AUTH: auth {} {}" . format(username,password))
                 return self.autentikasi_user(username,password)
-
+            
             # Fitur Baru Autentikasi
             elif command == "register":
                 nama = j[1].strip()
@@ -240,6 +240,119 @@ class Chat:
                 logging.warning("REMOTEINBOXGROUPREALM: groupname {} realm {}" . format(groupname, realm_id))
                 return self.get_remote_inbox_group_realm(groupname,realm_id)
             
+            # File-related
+            elif (command=='sendfile'):
+                sessionid = j[1].strip()
+                usernameto = j[2].strip()
+                filename = j[3].strip()
+                filecontent=""
+                for w in j[4:]:
+                    filecontent="{} {}" . format(filecontent,w)
+                usernamefrom = self.sessions[sessionid]['username']
+                logging.warning("SENDFILE: session {} send file from {} to {}" . format(sessionid, usernamefrom,usernameto))
+                return self.send_file(sessionid,usernamefrom,usernameto,filename,filecontent)
+            
+            elif (command=='downloadfile'):
+                sessionid = j[1].strip()
+                fileid = j[2].strip()
+                filename = j[3].strip()
+                logging.warning("DOWNLOADFILE: {} {}" . format(fileid,filename))
+                return self.download_file(sessionid,fileid,filename)
+          
+            elif (command=='sendgroupfile'):
+                sessionid = j[1].strip()
+                groupname = j[2].strip()
+                filename = j[3].strip()
+                filecontent=""
+                for w in j[4:]:
+                    filecontent="{} {}" . format(filecontent,w)
+                usernamefrom = self.sessions[sessionid]['username']
+                logging.warning("SENDGROUPFILE: session {} send file from {} to {}" . format(sessionid, usernamefrom,groupname))
+                return self.send_group_file(sessionid,usernamefrom,groupname,filename,filecontent)
+            
+            elif (command=='downloadgroupfile'):
+                sessionid = j[1].strip()
+                groupname = j[2].strip()
+                fileid = j[3].strip()
+                filename = j[4].strip()
+                logging.warning("DOWNLOADGROUPFILE: {} {}" . format(fileid,filename))
+                return self.download_group_file(sessionid,groupname,fileid,filename)
+       
+            elif (command=='sendrealmfile'):
+                src_address = j[1].strip()
+                src_port = int(j[2].strip())
+                sessionid = j[3].strip()
+                realm_id = j[4].strip()
+                usernameto = j[5].strip()
+                filename = j[6].strip()
+                filecontent=""
+                for w in j[7:]:
+                    filecontent="{} {}" . format(filecontent,w)
+                usernamefrom = self.sessions[sessionid]['username']
+                logging.warning("SENDREALMFILE: session {} send file from {} to {}" . format(sessionid, usernamefrom,realm_id))
+                return self.send_realm_file(sessionid,src_address,src_port,realm_id,usernamefrom,usernameto,filename,filecontent)
+            
+            elif (command=='downloadrealmfile'):
+                sessionid = j[1].strip()
+                realm_id = j[2].strip()
+                fileid = j[3].strip()
+                filename = j[4].strip()
+                username = self.sessions[sessionid]['username']
+                logging.warning("DOWNLOADREALMFILE: {} {}" . format(fileid,filename))
+                return self.download_realm_file(sessionid,username,realm_id,fileid,filename)
+            
+            elif command == 'remotedownloadrealmfile':
+                username = j[1].strip()
+                realm_id = j[2].strip()
+                fileid = j[3].strip()
+                filename = j[4].strip()
+                logging.warning("REMOTEDOWNLOADREALMFILE: username {} realm {}" . format(username, realm_id))
+                return self.remote_download_realm_file(username,realm_id,fileid,filename)
+            #############
+            elif command == 'sendgrouprealmfile':
+                src_address = j[1].strip()
+                src_port = int(j[2].strip())
+                sessionid = j[3].strip()
+                realm_id = j[4].strip()
+                groupname = j[5].strip()
+                filename = j[6].strip()
+                filecontent=""
+                for w in j[7:]:
+                    filecontent="{} {}" . format(filecontent,w)
+                usernamefrom = self.sessions[sessionid]['username']
+                logging.warning("SENDGROUPREALMFILE: session {} send message from {} to group {} in realm {}".format(sessionid, usernamefrom, groupname, realm_id))
+                return self.send_group_realm_file(sessionid, src_address, src_port, realm_id, usernamefrom, groupname, filename, filecontent)
+            
+            elif command == 'recvgrouprealmfile':
+                realm_id = j[1].strip()
+                usernamefrom = j[2].strip()
+                groupto = j[3].strip()
+                fileid = j[4].strip()
+                filename = j[5].strip()
+                filecontent=""
+                for w in j[6:]:
+                    filecontent="{} {}" . format(filecontent,w)
+                logging.warning("RECVGROUPREALMFILE: realm {} receive message from {} to group {}" . format(realm_id, usernamefrom, groupto))
+                return self.recv_group_realm_file(realm_id,usernamefrom,groupto,fileid,filename,filecontent)
+            
+            elif command == 'downloadgrouprealmfile':
+                sessionid = j[1].strip()
+                realm_id = j[2].strip()
+                groupname = j[3].strip()
+                fileid = j[4].strip()
+                filename = j[5].strip()
+                username = self.sessions[sessionid]['username']
+                logging.warning("DOWNLOADGROUPREALMFILE: session {} username {} groupname {} realm {}" . format(sessionid, username, groupname, realm_id))
+                return self.download_group_realm_file(sessionid,username,groupname,realm_id,fileid,filename)
+            
+            elif command == 'remotedownloadgrouprealmfile':
+                groupname = j[1].strip()
+                realm_id = j[2].strip()
+                fileid = j[3].strip()
+                filename = j[4].strip()
+                logging.warning("REMOTEDOWNLOADGROUPREALMFILE: groupname {} realm {}" . format(groupname, realm_id))
+                return self.remote_download_group_realm_file(groupname,realm_id,fileid,filename)
+            
             elif command == "sessioncheck":
                 return self.sessioncheck()
             
@@ -251,6 +364,8 @@ class Chat:
         except IndexError:
             return {'status': 'ERROR', 'message': '--Protocol Tidak Benar'}
 
+
+# IMPLEMENTATION FUNCTIONS
     def autentikasi_user(self,username,password):
         if (username not in self.users):
             return { 'status': 'ERROR', 'message': 'User Tidak Ada' }
@@ -259,7 +374,7 @@ class Chat:
         tokenid = str(uuid.uuid4()) 
         self.sessions[tokenid]={ 'username': username, 'userdetail':self.users[username]}
         return { 'status': 'OK', 'tokenid': tokenid }
-    
+
     # FITUR AUTENTIKASI BARU
     def register(self, nama, negara, username, password):
         nama = nama.replace("-", " ")
@@ -276,7 +391,7 @@ class Chat:
             return {"status": "OK"}
         else:
             return {"status": "ERROR", "message": "User Belum Login"}
-
+    
     def get_user(self,username):
         if (username not in self.users):
             return False
@@ -312,8 +427,9 @@ class Chat:
         msgs={}
         for users in incoming:
             msgs[users]=[]
-            while not incoming[users].empty():
-                msgs[users].append(s_fr['incoming'][users].get_nowait())
+            temp_queue = incoming[users].queue.copy()
+            while len(temp_queue) > 0:
+                msgs[users].append(temp_queue.pop())
 
         return {'status': 'OK', 'messages': msgs}
 
@@ -520,12 +636,216 @@ class Chat:
             msgs.append(temp_queue.pop())
         return {'status': 'OK', 'messages': msgs}
     
+    # File-related
+    def send_file(self,sessionid,username_from,username_dest,filename,filecontent):
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        s_fr = self.get_user(username_from)
+        s_to = self.get_user(username_dest)
+
+        if (s_fr==False or s_to==False):
+            return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
+
+        message = { 'msg_from': s_fr['nama'], 'msg_to': s_to['nama'], 'fileid': str(uuid.uuid4()), 'filename': filename, 'filecontent':filecontent }
+        outqueue_sender = s_fr['outgoing']
+        inqueue_receiver = s_to['incoming']
+        try:
+            outqueue_sender[username_from].put(message)
+        except KeyError:
+            outqueue_sender[username_from]=Queue()
+            outqueue_sender[username_from].put(message)
+        try:
+            inqueue_receiver[username_from].put(message)
+        except KeyError:
+            inqueue_receiver[username_from]=Queue()
+            inqueue_receiver[username_from].put(message)
+        return {'status': 'OK', 'message': 'File Sent'}
+    
+    def download_file(self,sessionid,fileid,filename):
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        username = self.sessions[sessionid]['username']
+        s_fr = self.get_user(username)
+        incoming = s_fr['incoming']
+        filecontent=""
+        for users in incoming:
+            temp_queue = incoming[users].queue.copy()
+            while len(temp_queue) > 0:
+                msg = temp_queue.pop()
+                print("MSG: {}". format(msg))
+                if 'fileid' in msg and msg['fileid']==fileid:
+                    return {'status': 'OK', 'message': msg['filecontent']}
+        return {'status': 'ERROR', 'message': 'File tidak ditemukan'}
+    
+    def send_group_file(self,sessionid,username_from,group_dest,filename,filecontent):
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        if (group_dest not in self.groups):
+            return { 'status': 'ERROR', 'message': 'Group belum ada' }
+        if (username_from not in self.groups[group_dest]['members']):
+            return { 'status': 'ERROR', 'message': 'Bukan member group' }
+        s_fr = self.get_user(username_from)
+        g_to = self.get_group(group_dest)
+
+        if (s_fr==False):
+            return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
+        if (g_to==False):
+            return {'status': 'ERROR', 'message': 'Group Tidak Ditemukan'}
+
+        message = { 'msg_from': s_fr['nama'], 'msg_to': g_to['nama'], 'fileid': str(uuid.uuid4()), 'filename': filename, 'filecontent':filecontent }
+        outqueue_sender = s_fr['outgoing']
+        inqueue_receiver = g_to['incoming']
+        try:
+            outqueue_sender[username_from].put(message)
+        except KeyError:
+            outqueue_sender[username_from]=Queue()
+            outqueue_sender[username_from].put(message)
+        try:
+            inqueue_receiver[username_from].put(message)
+        except KeyError:
+            inqueue_receiver[username_from]=Queue()
+            inqueue_receiver[username_from].put(message)
+        return {'status': 'OK', 'message': 'Group File Sent'}
+    
+    def download_group_file(self,sessionid,groupname,fileid,filename):
+        username = self.sessions[sessionid]['username']
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        if (groupname not in self.groups):
+            return { 'status': 'ERROR', 'message': 'Group belum ada' }
+        if (username not in self.groups[groupname]['members']):
+            return { 'status': 'ERROR', 'message': 'Bukan member group' }
+        s_fr = self.get_group(groupname)
+        incoming = s_fr['incoming']
+        filecontent=""
+        for users in incoming:
+            temp_queue = incoming[users].queue.copy()
+            while len(temp_queue) > 0:
+                msg = temp_queue.pop()
+                print("MSG: {}". format(msg))
+                if 'fileid' in msg and msg['fileid']==fileid:
+                    return {'status': 'OK', 'message': msg['filecontent']}
+        return {'status': 'ERROR', 'message': 'File tidak ditemukan'}
+    
+    def send_realm_file(self,sessionid,src_realm_addr,src_realm_port,realm_id,username_from,username_to,filename,filecontent):
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        if (realm_id not in self.realms_info):
+            return { 'status': 'ERROR', 'message': 'Realm belum ada' }
+        
+        s_fr = self.get_user(username_from)
+        s_to = self.get_user(username_to)
+        if (s_fr==False or s_to==False):
+            return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
+        
+        message_to_put = { 'msg_from': s_fr['nama'] + "(" + src_realm_addr + ":" + str(src_realm_port) + ")", 'msg_to': s_to['nama'], 'fileid': str(uuid.uuid4()), 'filename': filename, 'filecontent':filecontent }
+        self.realms[realm_id].put_private(message_to_put)
+        return {'status': 'OK', 'message': 'Pesan realm dikirim'}
+
+    def download_realm_file(self,sessionid,username,realm_id,fileid,filename):
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        if (realm_id not in self.realms_info):
+            return { 'status': 'ERROR', 'message': 'Realm belum ada' }
+        return self.realms[realm_id].sendstring("remotedownloadrealmfile {} {} {} {}\r\n".format(username, realm_id,fileid,filename))
+    
+    def remote_download_realm_file(self,username,realm_id,fileid,filename):
+        if (realm_id not in self.realms_info):
+            return { 'status': 'ERROR', 'message': 'Realm belum ada' }
+        s_fr = self.get_user(username)
+        
+        temp_queue = self.realms[realm_id].chat['users'][s_fr['nama']].queue.copy()
+        while len(temp_queue) > 0:
+            msg = temp_queue.pop()
+            print("MSG: {}". format(msg))
+            if 'fileid' in msg and msg['fileid']==fileid:
+                return {'status': 'OK', 'message': msg['filecontent']}
+        return {'status': 'ERROR', 'message': 'File tidak ditemukan'}
+    
+    def send_group_realm_file(self, sessionid, src_realm_addr, src_realm_port, realm_id, username_from, groupname, filename, filecontent):
+        if sessionid not in self.sessions:
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        if realm_id not in self.realms_info:
+            return {'status': 'ERROR', 'message': 'Realm belum ada'}
+        
+        group = self.groups[groupname]
+        if username_from not in group['members']:
+            return {'status': 'ERROR', 'message': 'Bukan member group'}
+
+        s_fr = self.get_user(username_from)
+        g_to = self.get_group(groupname)
+        if (s_fr==False):
+            return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
+        if (g_to==False):
+            return {'status': 'ERROR', 'message': 'Grup Tidak Ditemukan'}
+        fileid = str(uuid.uuid4())
+        message_to_put = {'msg_from': s_fr['nama'] + "(" + src_realm_addr + ":" + str(src_realm_port) + ")", 'msg_to': g_to['nama'], 'fileid': fileid, 'filename': filename, 'filecontent':filecontent}
+        self.realms[realm_id].put_group(message_to_put)
+
+        return self.realms[realm_id].sendstring("recvgrouprealmfile {} {} {} {} {} {}\r\n" . format(realm_id, username_from, groupname, fileid, filename, filecontent))
+    
+    def recv_group_realm_file(self, realm_id, username_from, groupname, fileid, filename, filecontent):
+        if (realm_id not in self.realms):
+            return {'status': 'ERROR', 'message': 'Realm belum ada'}
+        s_fr = self.get_user(username_from)
+        g_to = self.get_group(groupname)
+        if (s_fr==False):
+            return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
+        if (g_to==False):
+            return {'status': 'ERROR', 'message': 'Grup Tidak Ditemukan'}
+
+        src_realm_addr = self.realms_info[realm_id]['serverip']
+        src_realm_port = self.realms_info[realm_id]['port']
+        
+        try:
+            message_to_put = {'msg_from': s_fr['nama'] + "(" + src_realm_addr + ":" + str(src_realm_port) + ")", 'msg_to': g_to['nama'], 'fileid': fileid, 'filename': filename, 'filecontent':filecontent}
+            self.realms[realm_id].put_group(message_to_put)
+            return {'status': 'OK', 'message': 'File grup realm terkirim'}
+        except:
+            return {'status': 'ERROR', 'message': 'File grup realm gagal terkirim'}
+    
+    def download_group_realm_file(self,sessionid,username,groupname,realm_id,fileid, filename):
+        if (sessionid not in self.sessions):
+            return {'status': 'ERROR', 'message': 'Session Tidak Ditemukan'}
+        if (groupname not in self.groups):
+            return { 'status': 'ERROR', 'message': 'Group belum ada' }
+        if (username not in self.groups[groupname]['members']):
+            return { 'status': 'ERROR', 'message': 'Bukan member group' }
+        if (realm_id not in self.realms_info):
+            return { 'status': 'ERROR', 'message': 'Realm belum ada' }
+        return self.realms[realm_id].sendstring("remotedownloadgrouprealmfile {} {} {} {}\r\n".format(groupname, realm_id, fileid, filename))
+    
+    def remote_download_group_realm_file(self,groupname,realm_id,fileid,filename):
+        if (realm_id not in self.realms_info):
+            return { 'status': 'ERROR', 'message': 'Realm belum ada' }
+        s_fr = self.get_group(groupname)
+        incoming = s_fr['incoming']
+        # print("s_fr is: {}" . format(s_fr))
+        # print(incoming)
+        
+        temp_queue = self.realms[realm_id].chat['groups'][s_fr['nama']].queue.copy()
+        while len(temp_queue) > 0:
+            msg = temp_queue.pop()
+            print("MSG: {}". format(msg))
+            if 'fileid' in msg and msg['fileid']==fileid:
+                return {'status': 'OK', 'message': msg['filecontent']}
+        return {'status': 'ERROR', 'message': 'File tidak ditemukan'}
+        
+        filecontent=""
+        temp_queue = self.realms[realm_id].chat['groups'][s_fr['nama']].queue.copy()
+        while len(temp_queue) > 0:
+            msg = temp_queue.pop()
+            print("MSG: {}". format(msg))
+            if 'fileid' in msg and msg['fileid']==fileid:
+                return {'status': 'OK', 'message': msg['filecontent']}
+        return {'status': 'ERROR', 'message': 'File tidak ditemukan'}
+    
     def get_groups(self):
         return {"status": "OK", "message": self.groups}
-    
+
     def sessioncheck(self):
         return {"status": "OK", "message": self.sessions}
-    
+
 if __name__=="__main__":
     j = Chat()
 #     sesi = j.proses("auth messi surabaya")
