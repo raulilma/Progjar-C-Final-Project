@@ -15,7 +15,7 @@
 -   [x] Basic Operation (Auth, Inbox, dan Send)
 -   [x] Group Chat
 -   [x] Private Chat
--   [ ] Group Chat Antar Realm
--   [ ] Private Chat Antar Realm
+-   [x] Group Chat Antar Realm
+-   [x] Private Chat Antar Realm
 -   [ ] Send File
 -   [ ] User Interface Flet
