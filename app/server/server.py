@@ -21,7 +21,7 @@ class ProcessTheClient(threading.Thread):
     def run(self):
         rcv=""
         while True:
-            data = self.connection.recv(32)
+            data = self.connection.recv(4096)
             if data:
                 d = data.decode()
                 rcv=rcv+d

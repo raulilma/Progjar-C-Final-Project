@@ -11,19 +11,17 @@ ON_WEB = os.getenv("ONWEB") or "0"
 class ChatList(ft.Container):
     def __init__(self, page, users, from_user):
         super().__init__()
-        for value in users.values():
-            print(value["username"])
         self.content = ft.Column(
             [
                 ft.ListTile(
                     leading=ft.Icon(ft.icons.PERSON),
                     title=ft.Text(f"{value['username']}"),
-                    on_click=lambda _: page.go(f"/private/{value['username']}"),
+                    on_click=lambda _: page.go(f"/privatechat/{value['username']}"),
                 )
                 for value in users.values()
+                if value['username'] != from_user
             ],
         )
-
         self.padding = ft.padding.symmetric(vertical=10)
 
 
@@ -84,7 +82,6 @@ class ChatRoom:
         upload_list = []
         if self.file_picker.result != None and self.file_picker.result.files != None:
             for f in self.file_picker.result.files:
-                # print(self.page.get_upload_url(f.name, 600),)
                 upload_list.append(
                     ft.FilePickerUploadFile(
                         f.name,
@@ -421,7 +418,7 @@ def main(page):
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER
                         ),
                         width=150,
-                        on_click=lambda _: page.go("/chat"),
+                        on_click=lambda _: page.go("/privatechat"),
                         style=ft.ButtonStyle(
                             shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
                         )
@@ -491,18 +488,53 @@ def main(page):
             ]
         )
     
-    def route_change(route):
+    def route_change(__route__):
+        temproute = ft.TemplateRoute(page.route)
         page.views.clear()
         page.views.append(
             ft.View(
                 "/",
                 [
-                    ft.AppBar(title=ft.Text("Chat Gaptek"), bgcolor=ft.colors.SURFACE_VARIANT),
-                    ft.Text(f"Hi, User Gaptek!", style=ft.TextThemeStyle.HEADLINE_LARGE),
+                    ft.AppBar(title=ft.Text("Chattery"), bgcolor=ft.colors.SURFACE_VARIANT),
+                    ft.Text(f"Hi, User Chattery!", style=ft.TextThemeStyle.HEADLINE_LARGE),
                     menu_buttons()
                 ],
             )
         )
+        
+        if temproute.match("/privatechat"):
+            page.views.append(
+                ft.View(
+                    "/privatechat",
+                    [
+                        ft.AppBar(title=ft.Text("Private Chat")),
+                        ft.Card(
+                            content=ChatList(page, cc.sessioncheck(), cc.username),
+                        ),
+                    ],
+                )
+            )
+
+        elif temproute.match("/privatechat/:username"):
+            cr = ChatRoom(page, cc, cc.username, temproute.username)
+            
+            file_picker = ft.FilePicker()
+            page.overlay.append(file_picker)
+            page.update()
+
+            page.views.append(
+                ft.View(
+                    f"/privatechat/{temproute.username}",
+                    [
+                        ft.AppBar(
+                            title=ft.Text(f"Private Chat with {temproute.username}"),
+                        ),
+                        cr.lv,
+                        ft.Row([cr.chat, cr.send, cr.file_pick]),
+                    ],
+                )
+            )
+        
         if page.route == "/chat":
             page.views.append(
                 ft.View(
@@ -519,8 +551,14 @@ def main(page):
 
     def view_pop(view):
         page.views.pop()
-        top_view = page.views[-1]
-        page.go(top_view.route)
+        try:
+            top_view = page.views[-1]
+            page.go(top_view.route)
+        except Exception as e:
+            print(e)
+            top_view = page.views[0]
+            page.go(top_view.route)
+        
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
