@@ -159,8 +159,6 @@ def main(page):
             cmd.value=""
             page.update()
 
-    cc = ChatClient()
-
     lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
     cmd = ft.TextField(label="Your command")
 
