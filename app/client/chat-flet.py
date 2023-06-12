@@ -168,10 +168,8 @@ class GroupChatRoom:
 
     def on_chat(self, message):
         check_inbox_group = json.loads(self.cc.inboxgroup(self.to_group))
-        # command = f"debug {self.to_group} {self.cc.inboxgroup(self.to_group)}"
-        # server_call = self.cc.proses(command)
         for user in check_inbox_group:
-            if user != self.from_user:
+            if user != self.from_user and check_inbox_group[user][0]['msg_ufrom'] is not self.from_user:
                 self.lv.controls.append(ft.Text("From {}: {}".format(check_inbox_group[user][0]['msg_from'], check_inbox_group[user][0]['msg'])))
         self.page.update()
 
@@ -286,7 +284,7 @@ def main(page):
             page.dialog.actions=[
                 ft.ElevatedButton("Submit!" ,width=100,height=30, on_click=joingroup_click)
             ]
-            page.dialog.content=ft.Column([groupname, grouppassword], tight=True)
+            page.dialog.content=ft.Column([groupname, grouppassword_join], tight=True)
             page.update()
 
         page.dialog = ft.AlertDialog(
@@ -295,7 +293,7 @@ def main(page):
             title=ft.Text(
                 "Join Group", style=ft.TextThemeStyle.TITLE_MEDIUM
             ),
-            content=ft.Column([groupname, grouppassword], tight=True),
+            content=ft.Column([groupname, grouppassword_join], tight=True),
             actions=[
                 ft.ElevatedButton("Submit!",width=100,height=30, on_click=joingroup_click)
             ],
@@ -342,15 +340,15 @@ def main(page):
             groupname.error_text = ""
             groupname.update()
 
-        if not grouppassword.value:
-            grouppassword.error_text = "You need to enter the group password."
-            grouppassword.update()
+        if not grouppassword_join.value:
+            grouppassword_join.error_text = "You need to enter the group password."
+            grouppassword_join.update()
         else :
-            grouppassword.error_text = ""
-            grouppassword.update()
+            grouppassword_join.error_text = ""
+            grouppassword_join.update()
 
-        if groupname.value != "" and grouppassword.value != "":
-            newgroup = cc.joingroup(groupname.value, grouppassword.value)
+        if groupname.value != "" and grouppassword_join.value != "":
+            newgroup = cc.joingroup(groupname.value, grouppassword_join.value)
 
             if "Error" in newgroup:
                 groupname.error_text = "Failed on Joining Group :("
@@ -358,9 +356,9 @@ def main(page):
 
             else:
                 groupname.value = ""
-                grouppassword.value = ""
+                grouppassword_join.value = ""
                 groupname.error_text = ""
-                grouppassword.error_text = ""
+                grouppassword_join.error_text = ""
                 page.update()
                 page.dialog.open = False
                 
@@ -480,6 +478,13 @@ def main(page):
         can_reveal_password=True,
         autofocus=True,
         on_submit=creategroup_click,
+    )
+    grouppassword_join = ft.TextField(
+        label="Group Password",
+        password=True,
+        can_reveal_password=True,
+        autofocus=True,
+        on_submit=joingroup_click,
     )
     
     login_dialog()

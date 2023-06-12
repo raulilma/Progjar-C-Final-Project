@@ -365,7 +365,7 @@ class Chat:
         if (g_to==False):
             return {'status': 'ERROR', 'message': 'Group Tidak Ditemukan'}
 
-        message = { 'msg_from': s_fr['nama'], 'msg_to': g_to['nama'], 'msg': message }
+        message = { 'msg_from': s_fr['nama'], 'msg_ufrom': username_from, 'msg_to': g_to['nama'], 'msg': message }
         outqueue_sender = s_fr['outgoing']
         inqueue_receiver = g_to['incoming']
         try:
