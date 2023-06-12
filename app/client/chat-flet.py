@@ -118,6 +118,86 @@ class ChatRoom:
             self.chat.value = ""
             self.chat.focus()
             self.page.update()
+            
+class GroupChatRoom:
+    def __init__(self, page, cc, from_user, to_group):
+        self.chat = ft.TextField(
+            label="Write a message...",
+            autofocus=True,
+            expand=True,
+            on_submit=self.send_click,
+        )
+        self.lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+        self.send = ft.IconButton(
+            icon=ft.icons.SEND_ROUNDED,
+            tooltip="Send message",
+            on_click=self.send_click,
+        )
+        self.file_picker = ft.FilePicker(on_result=self.upload_files, on_upload=self.upload_server)
+        self.file_pick = ft.IconButton(
+            icon=ft.icons.UPLOAD_FILE_ROUNDED,
+            tooltip="Send file",
+            on_click=self.on_pick_file,
+        )
+        self.page = page
+        self.cc = cc
+        self.from_user = from_user
+        self.to_group = to_group
+        self.page.pubsub.subscribe(self.on_chat)
+
+    def on_pick_file(self, __e__):
+        self.page.overlay.append(self.file_picker)
+        self.page.update()
+        self.file_picker.pick_files(allow_multiple=True)
+
+    def send_click(self, __e__):
+        if not self.chat.value:
+            self.chat.error_text = "Please enter message"
+            self.page.update()
+        else:
+            command = f"sendgroup {self.to_group} {self.chat.value}"
+            server_call = self.cc.proses(command)
+            self.lv.controls.append(ft.Text("To {}: {}".format(self.to_group, self.chat.value)))
+
+            if "sent" in server_call:
+                self.page.pubsub.send_all(self.chat.value)
+
+            self.chat.value = ""
+            self.chat.focus()
+            self.page.update()
+
+    def on_chat(self, message):
+        check_inbox_group = json.loads(self.cc.inboxgroup(self.to_group))
+        self.lv.controls.append(ft.Text("From {}: {}".format(check_inbox_group[self.to_group][0]['msg_from'], check_inbox_group[self.to_group][0]['msg'])))
+        self.page.update()
+
+    # file picker and uploads
+    def upload_files(self, e:ft.FilePickerResultEvent):
+        upload_list = []
+        if self.file_picker.result != None and self.file_picker.result.files != None:
+            for f in self.file_picker.result.files:
+                upload_list.append(
+                    ft.FilePickerUploadFile(
+                        f.name,
+                        upload_url=self.page.get_upload_url(f.name, 600),
+                    )
+                )
+            self.file_picker.upload(upload_list)
+    
+    def upload_server(self, e:ft.FilePickerUploadEvent):
+        if(e.progress == 1):
+            command = f"sendfile {self.to_group} app\\client\\upload\\{e.file_name}"
+            print(command)
+            server_call = self.cc.proses(command)
+            print(server_call)
+            self.lv.controls.append(ft.Text("To {}: Berhasil mengirim file {}".format(self.to_group, e.file_name)))
+
+            if "sent" in server_call:
+                self.page.pubsub.send_all(self.chat.value)
+
+            self.chat.value = ""
+            self.chat.focus()
+            self.page.update()
 
 def main(page):
     cc = ChatClient()
@@ -563,7 +643,7 @@ def main(page):
             )
             
         elif temproute.match("/groupchat/:groupname"):
-            cr = ChatRoom(page, cc, cc.username, temproute.groupname)
+            cr = GroupChatRoom(page, cc, cc.username, temproute.groupname)
             
             file_picker = ft.FilePicker()
             page.overlay.append(file_picker)

@@ -139,7 +139,7 @@ class Chat:
                 sessionid = j[1].strip()
                 groupname = j[2].strip()
                 username = self.sessions[sessionid]['username']
-                logging.warning("INBOX: {}" . format(groupname))
+                logging.warning("INBOXGROUP: {}" . format(groupname))
                 return self.get_inbox_group(sessionid, username, groupname)
 
             # Realm-related
