@@ -168,7 +168,11 @@ class GroupChatRoom:
 
     def on_chat(self, message):
         check_inbox_group = json.loads(self.cc.inboxgroup(self.to_group))
-        self.lv.controls.append(ft.Text("From {}: {}".format(check_inbox_group[self.to_group][0]['msg_from'], check_inbox_group[self.to_group][0]['msg'])))
+        # command = f"debug {self.to_group} {self.cc.inboxgroup(self.to_group)}"
+        # server_call = self.cc.proses(command)
+        for user in check_inbox_group:
+            if user != self.from_user:
+                self.lv.controls.append(ft.Text("From {}: {}".format(check_inbox_group[user][0]['msg_from'], check_inbox_group[user][0]['msg'])))
         self.page.update()
 
     # file picker and uploads
