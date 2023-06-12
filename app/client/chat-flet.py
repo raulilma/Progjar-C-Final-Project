@@ -183,7 +183,7 @@ def main(page):
                         content=ft.Column(
                             [
                                 ft.Icon(name=ft.icons.CHAT, size=100),
-                                ft.Text(value="Private Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                                ft.Text(value="Private Chats", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -198,7 +198,22 @@ def main(page):
                         content=ft.Column(
                             [
                                 ft.Icon(name=ft.icons.GROUP, size=100),
-                                ft.Text(value="Group Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                                ft.Text(value="Group Chats", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=250,
+                        on_click=lambda _: page.go("/chat"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
+                                ft.Icon(name=ft.icons.GROUPS, size=100),
+                                ft.Text(value="Create Group Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER
