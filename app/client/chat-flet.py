@@ -289,6 +289,24 @@ def main(page):
                     ],
                 )
             )
+        elif page.route == "/groupchat":
+            page.views.append(
+                ft.View(
+                    "/groupchat",
+                    [
+                        ft.AppBar(title=ft.Text("Create Group Chat"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True),
+                        ft.TextField(label="Group Name"),
+                        ft.TextField(
+                            label="Password",
+                            password=True,
+                            can_reveal_password=True,
+                            autofocus=True
+                        ),
+                        ft.ElevatedButton("Create", on_click=btn_click),
+                    ],
+                )
+            )
         page.update()
 
     def view_pop(view):
