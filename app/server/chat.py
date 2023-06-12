@@ -238,7 +238,7 @@ class Chat:
                 return self.get_remote_inbox_group_realm(groupname,realm_id)
             
             elif command == "sessioncheck":
-                return self.info()
+                return self.sessioncheck()
             
             else:
                 return {'status': 'ERROR', 'message': '**Protocol Tidak Benar'}
