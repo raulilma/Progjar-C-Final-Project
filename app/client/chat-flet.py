@@ -24,6 +24,20 @@ class ChatList(ft.Container):
         )
         self.padding = ft.padding.symmetric(vertical=10)
 
+class GroupList(ft.Container):
+    def __init__(self, page, groups):
+        super().__init__()
+        self.content = ft.Column(
+            [
+                ft.ListTile(
+                    leading=ft.Icon(ft.icons.PERSON),
+                    title=ft.Text(f"{value['nama']}"),
+                    on_click=lambda _: page.go(f"/groupchat/{value['nama']}"),
+                )
+                for value in groups.values()
+            ],
+        )
+        self.padding = ft.padding.symmetric(vertical=10)
 
 class ChatRoom:
     def __init__(self, page, cc, from_user, to_user):
@@ -433,7 +447,7 @@ def main(page):
                             horizontal_alignment=ft.CrossAxisAlignment.CENTER
                         ),
                         width=250,
-                        on_click=lambda _: page.go("/chat"),
+                        on_click=lambda _: page.go("/groupchat"),
                         style=ft.ButtonStyle(
                             shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
                         )
@@ -507,7 +521,7 @@ def main(page):
                 ft.View(
                     "/privatechat",
                     [
-                        ft.AppBar(title=ft.Text("Private Chat")),
+                        ft.AppBar(title=ft.Text("User Lists")),
                         ft.Card(
                             content=ChatList(page, cc.sessioncheck(), cc.username),
                         ),
@@ -534,6 +548,42 @@ def main(page):
                     ],
                 )
             )
+        
+        elif temproute.match("/groupchat"):
+            page.views.append(
+                ft.View(
+                    "/groupchat",
+                    [
+                        ft.AppBar(title=ft.Text("Group Lists")),
+                        ft.Card(
+                            content=GroupList(page, cc.getgroups()),
+                        ),
+                    ],
+                )
+            )
+            
+        elif temproute.match("/groupchat/:groupname"):
+            cr = ChatRoom(page, cc, cc.username, temproute.groupname)
+            
+            file_picker = ft.FilePicker()
+            page.overlay.append(file_picker)
+            page.update()
+
+            page.views.append(
+                ft.View(
+                    f"/groupchat/{temproute.groupname}",
+                    [
+                        ft.AppBar(
+                            title=ft.Text(f"Group Chat | {temproute.groupname}"),
+                        ),
+                        cr.lv,
+                        ft.Row([cr.chat, cr.send, cr.file_pick]),
+                    ],
+                )
+            )
+        page.update()
+        
+        
         
         if page.route == "/chat":
             page.views.append(

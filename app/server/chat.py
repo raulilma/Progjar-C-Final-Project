@@ -106,6 +106,9 @@ class Chat:
                 return self.get_inbox(username)
 
             # Local Group-related
+            elif (command=='getgroups'):
+                return self.get_groups()
+            
             elif (command=='addgroup'):
                 sessionid = j[1].strip()
                 username = self.sessions[sessionid]['username']
@@ -516,6 +519,9 @@ class Chat:
         while len(temp_queue) > 0:
             msgs.append(temp_queue.pop())
         return {'status': 'OK', 'messages': msgs}
+    
+    def get_groups(self):
+        return {"status": "OK", "message": self.groups}
     
     def sessioncheck(self):
         return {"status": "OK", "message": self.sessions}

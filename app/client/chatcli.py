@@ -15,6 +15,7 @@ class ChatClient:
         self.sock.connect(self.server_address)
         self.tokenid=""
         self.username = ""
+        self.groups = {}
         self.address_ip = TARGET_IP
         self.address_port = TARGET_PORT
 
@@ -47,6 +48,13 @@ class ChatClient:
             elif (command=='addgroup'):
                 groupname=j[1].strip()
                 password=j[2].strip()
+                self.groups[groupname]={
+                    'nama': groupname,
+                    'password': password,
+                    'incoming' : {},
+                    'members' : [],
+                    'incomingrealm' : {}
+                }
                 return self.addgroup(groupname, password)
                 
             elif (command=='joingroup'):
@@ -102,6 +110,9 @@ class ChatClient:
             
             elif command == "sessioncheck":
                 return self.sessioncheck()
+            
+            elif command == "getgroups":
+                return self.getgroups()
             
             else:
                 return "*Maaf, command tidak benar"
@@ -176,6 +187,12 @@ class ChatClient:
             return "Error, {}" . format(result['message'])
     
     # Local Group-related
+    def getgroups(self):
+        string = "getgroups {} \r\n"
+        result = self.sendstring(string)
+        if result["status"] == "OK":
+            return result["message"]
+    
     def addgroup(self, groupname, password):
         if (self.tokenid==""):
             return "Error, not authorized"
