@@ -77,6 +77,18 @@ class Chat:
                 logging.warning("AUTH: auth {} {}" . format(username,password))
                 return self.autentikasi_user(username,password)
 
+            # Fitur Baru Autentikasi
+            elif command == "register":
+                nama = j[1].strip()
+                negara = j[2].strip()
+                username = j[3].strip()
+                password = j[4].strip()
+                logging.warning("REGISTER: register {} {}".format(username, password))
+                return self.register(nama, negara, username, password)
+            
+            elif (command == "logout"):
+                return self.logout()
+            
             elif (command=='send'):
                 sessionid = j[1].strip()
                 usernameto = j[2].strip()
@@ -225,6 +237,9 @@ class Chat:
                 logging.warning("REMOTEINBOXGROUPREALM: groupname {} realm {}" . format(groupname, realm_id))
                 return self.get_remote_inbox_group_realm(groupname,realm_id)
             
+            elif command == "sessioncheck":
+                return self.info()
+            
             else:
                 return {'status': 'ERROR', 'message': '**Protocol Tidak Benar'}
 
@@ -233,8 +248,6 @@ class Chat:
         except IndexError:
             return {'status': 'ERROR', 'message': '--Protocol Tidak Benar'}
 
-
-# IMPLEMENTATION FUNCTIONS
     def autentikasi_user(self,username,password):
         if (username not in self.users):
             return { 'status': 'ERROR', 'message': 'User Tidak Ada' }
@@ -243,6 +256,23 @@ class Chat:
         tokenid = str(uuid.uuid4()) 
         self.sessions[tokenid]={ 'username': username, 'userdetail':self.users[username]}
         return { 'status': 'OK', 'tokenid': tokenid }
+    
+    # FITUR AUTENTIKASI BARU
+    def register(self, nama, negara, username, password):
+        nama = nama.replace("-", " ")
+        if username in self.users:
+            return {"status": "ERROR", "message": "User Sudah Terdaftar"}
+        self.users[username] = {"nama": nama, "negara": negara, "password": password, "incoming": {}, "outgoing": {}}
+        tokenid = str(uuid.uuid4())
+        self.sessions[tokenid]={ 'username': username, 'userdetail':self.users[username]}
+        return {"status": "OK", "tokenid": tokenid}
+    
+    def logout(self):
+        if bool(self.sessions) == True:
+            self.sessions.clear()
+            return {"status": "OK"}
+        else:
+            return {"status": "ERROR", "message": "User Belum Login"}
 
     def get_user(self,username):
         if (username not in self.users):
@@ -486,6 +516,9 @@ class Chat:
         while len(temp_queue) > 0:
             msgs.append(temp_queue.pop())
         return {'status': 'OK', 'messages': msgs}
+    
+    def sessioncheck(self):
+        return {"status": "OK", "message": self.sessions}
     
 if __name__=="__main__":
     j = Chat()

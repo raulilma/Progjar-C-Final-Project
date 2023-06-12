@@ -33,6 +33,14 @@ class ChatClient:
                 return self.sendmessage(usernameto,message)
             elif (command=='inbox'):
                 return self.inbox()
+            elif (command == "register"):
+                nama = j[1].strip()
+                negara = j[2].strip()
+                username = j[3].strip()
+                password = j[4].strip()
+                return self.register(nama, negara, username, password)
+            elif (command=='logout'):
+                return self.inbox()
             
             # Local Group-related
             elif (command=='addgroup'):
@@ -91,6 +99,9 @@ class ChatClient:
                 groupname=j[2].strip()
                 return self.inboxgrouprealm(realm_id,groupname)
             
+            elif command == "sessioncheck":
+                return self.sessioncheck()
+            
             else:
                 return "*Maaf, command tidak benar"
         except IndexError:
@@ -121,6 +132,25 @@ class ChatClient:
             return "username {} logged in, token {} " .format(username,self.tokenid)
         else:
             return "Error, {}" . format(result['message'])
+        
+    # Fitur autentikasi tambahan
+    def register(self, nama, negara, username, password):
+        string = "register {} {} {} {}\r\n".format(nama, negara, username, password)
+        result = self.sendstring(string)
+        if result["status"] == "OK":
+            self.tokenid = result["tokenid"]
+            return "username {} register in, token {} ".format(username, self.tokenid)
+        else:
+            return "Error, {}".format(result["message"])
+        
+    def logout(self):
+        string = "logout \r\n"
+        result = self.sendstring(string)
+        if result["status"] == "OK":
+            self.tokenid = ""
+            return "user logged out"
+        else:
+            return "Error, {}".format(result["message"])
 
     def sendmessage(self,usernameto="xxx",message="xxx"):
         if (self.tokenid==""):
@@ -244,6 +274,12 @@ class ChatClient:
             return "{}" . format(json.dumps(result['messages']))
         else:
             return "Error, {}" . format(result['message'])
+        
+    def sessioncheck(self):
+        string = "sessioncheck {} \r\n"
+        result = self.sendstring(string)
+        if result["status"] == "OK":
+            return result["message"]
         
 if __name__=="__main__":
     cc = ChatClient()
