@@ -6,6 +6,9 @@ import sys
 import json
 import logging
 from chat import Chat
+import os
+SERVER_IP=os.getenv('SERVER_IP') or "0.0.0.0"
+SERVER_PORT=os.getenv('SERVER_PORT') or "8889"
 
 chatserver = Chat()
 
@@ -35,16 +38,14 @@ class ProcessTheClient(threading.Thread):
         self.connection.close()
 
 class Server(threading.Thread):
-    def __init__(self, ip, port):
-        self.ip = ip
-        self.port = port
+    def __init__(self):
         self.the_clients = []
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         threading.Thread.__init__(self)
 
     def run(self):
-        self.my_socket.bind((self.ip, self.port))
+        self.my_socket.bind((SERVER_IP,int(SERVER_PORT)))
         self.my_socket.listen(1)
         while True:
             self.connection, self.client_address = self.my_socket.accept()
@@ -56,14 +57,8 @@ class Server(threading.Thread):
 
 
 def main():
-    portnumber=8889
-    try:
-        portnumber=int(sys.argv[1])
-    except:
-        pass
-    svr = Server('0.0.0.0', portnumber)
+    svr = Server()
     svr.start()
 
 if __name__=="__main__":
     main()
-

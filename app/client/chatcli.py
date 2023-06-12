@@ -3,10 +3,15 @@ import os
 import json
 import sys
 
+TARGET_IP = os.getenv("SERVER_IP") or "127.0.0.1"
+TARGET_PORT = os.getenv("SERVER_PORT") or "8889"
+
 class ChatClient:
-    def __init__(self, TARGET_IP, TARGET_PORT):
+    def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_address = (TARGET_IP,TARGET_PORT)
+        print(TARGET_IP)
+        print(TARGET_PORT)
+        self.server_address = (TARGET_IP,int(TARGET_PORT))
         self.sock.connect(self.server_address)
         self.tokenid=""
         self.address_ip = TARGET_IP
@@ -241,18 +246,7 @@ class ChatClient:
             return "Error, {}" . format(result['message'])
         
 if __name__=="__main__":
-    TARGET_IP = "127.0.0.1"
-    TARGET_PORT = 9000
-    try:
-        TARGET_IP = sys.argv[1]
-    except:
-        pass
-    try:
-        TARGET_PORT = int(sys.argv[2])
-    except:
-        pass
-    cc = ChatClient(TARGET_IP, TARGET_PORT)
+    cc = ChatClient()
     while True:
         cmdline = input("Command {}:" . format(cc.tokenid))
         print(cc.proses(cmdline))
-
