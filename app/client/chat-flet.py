@@ -58,6 +58,12 @@ def main(page):
             ],
             actions_alignment="end",
         )
+    
+    def logout_click(e):
+        is_login = False
+        cc.logout()
+        login_dialog()
+        page.update()
 
     def register_click(__e__):
         if not username.value:
@@ -251,7 +257,7 @@ def main(page):
                         ),
                         width=250,
                         height=250,
-                        on_click=lambda _: page.go("/chat"),
+                        on_click=logout_click,
                         style=ft.ButtonStyle(
                             shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
                         )
