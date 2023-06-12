@@ -10,6 +10,143 @@ ON_WEB = os.getenv("ONWEB") or "0"
 
 
 def main(page):
+    cc = ChatClient()
+    page.title = "Chat App"
+    is_login = False
+
+    global login_dialog
+    def login_dialog():
+        nonlocal is_login
+        global signin
+        global logouttologin
+        global changeto_logout
+
+        def register(e):
+            page.dialog.title=ft.Text(
+                "Register Now", style=ft.TextThemeStyle.TITLE_MEDIUM
+            )
+            page.dialog.actions=[
+                ft.Row(controls=[ft.Text(value="Already have an account?"),ft.TextButton(text="Sign in",on_click=signin)],alignment=ft.MainAxisAlignment.CENTER),
+                ft.ElevatedButton("Register", on_click=register_click)
+            ]
+            page.dialog.content=ft.Column([username, password,name,country], tight=True)
+            page.update()
+        
+        def signin(e):
+            page.dialog.title=ft.Text(
+                "Login", style=ft.TextThemeStyle.TITLE_MEDIUM
+            )
+            page.dialog.actions=[
+                ft.Row(controls=[ft.Text(value="Don't have a account?"),ft.TextButton(text="Sign Up Here",on_click=register)],alignment=ft.MainAxisAlignment.CENTER),
+                ft.ElevatedButton("Login" ,width=100,height=30, on_click=login_click)
+            ]
+            page.dialog.content=ft.Column([username, password], tight=True)
+
+            page.update()
+
+
+        page.dialog = ft.AlertDialog(
+            open=not is_login,
+            modal=True,
+            title=ft.Text(
+                "Login", style=ft.TextThemeStyle.TITLE_MEDIUM
+            ),
+            content=ft.Column([username, password], tight=True),
+            actions=[
+                ft.Row(controls=[ft.Text(value="Don't have a account?"),ft.TextButton(text="Sign Up Here",on_click=register)],alignment=ft.MainAxisAlignment.CENTER),
+                ft.ElevatedButton("Login",width=100,height=30, on_click=login_click)
+            ],
+            actions_alignment="end",
+        )
+
+    def register_click(__e__):
+        if not username.value:
+            username.error_text = "Enter a username for your profile."
+            username.update()
+        else :
+            username.error_text = ""
+            username.update()
+
+        if not password.value:
+            password.error_text = "You need to enter a password."
+            password.update()
+        else :
+            password.error_text = ""
+            password.update()
+        
+        if not name.value:
+            name.error_text = "Enter a name for your profile"
+            name.update()
+        else :
+            name.error_text = ""
+            name.update()
+
+        if not country.value:
+            country.error_text = "Country cannot be blank!"
+            country.update()
+        else :
+            country.error_text = ""
+            country.update()
+
+        if username.value != "" and password.value != "" and name.value != "" and country.value != "":
+            login = cc.register(username.value, password.value, name.value, country.value)
+
+            if "Error" in login:
+                country.error_text = "Register Failed :("
+                country.update()
+
+            else:
+                username.value = ""
+                password.value = ""
+                name.value = ""
+                country.value = ""
+                username.error_text = ""
+                password.error_text = ""
+                name.error_text = ""
+                country.error_text = ""
+                page.update()
+                signin(None)
+            page.update()
+
+    def login_click(__e__):
+        if not username.value:
+            username.error_text = "Username connot be blank!"
+            username.update()
+        else :
+            username.error_text = ""
+            username.update()
+
+
+        if not password.value:
+            password.error_text = "Please enter password!"
+            password.update()
+        else :
+            password.error_text = ""
+            password.update()
+
+        if username.value != "" and password.value != "":
+            login = cc.login(username.value, password.value)
+
+            if "Error" in login:
+                username.error_text = "Username or Password does not match"
+                password.error_text = "Username or Password does not match"
+                username.update()
+
+            page.update()
+
+    username = ft.TextField(label="Username", autofocus=True)
+    password = ft.TextField(
+        label="Password",
+        password=True,
+        can_reveal_password=True,
+        autofocus=True,
+        on_submit=login_click,
+    )
+    name = ft.TextField(label="Name", autofocus=True)
+    country = ft.TextField(label="Country", autofocus=True)
+    
+    login_dialog()
+
     def btn_click(e):
         if not cmd.value:
             cmd.error_text = "masukkan command"
@@ -21,8 +158,6 @@ def main(page):
             lv.controls.append(ft.Text(f"result {cc.tokenid}: {txt}"))
             cmd.value=""
             page.update()
-
-    cc = ChatClient()
 
     lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
     cmd = ft.TextField(label="Your command")
