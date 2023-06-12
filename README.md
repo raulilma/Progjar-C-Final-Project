@@ -11,11 +11,21 @@
 | 5025201083 | M. Labib Alfaraby            |
 | 5025201177 | Muhammad Daffa Aldriantama   |
 
-## Pekerjaan
+## List Pekerjaan
 -   [x] Basic Operation (Auth, Inbox, dan Send)
 -   [x] Group Chat
 -   [x] Private Chat
 -   [x] Group Chat Antar Realm
 -   [x] Private Chat Antar Realm
--   [ ] Send File
+-   [ ] Upload File
 -   [ ] User Interface Flet
+
+## List User Interface Flet
+-   [ ] Sistem Bubble Chat (Private/Group Chat Menu)
+-   [ ] On-Boarding Page
+-   [ ] Login Page (Username dan Password)
+-   [ ] Register Page (Nama, Username, Negara, dan Password)
+-   [ ] Main Menu (Private Chat, Group Chat, Join Group Chat, dan Logout Button)
+-   [x] Private Chat Menu
+-   [ ] Group Chat Menu
+-   [ ] Join Group Menu (Groupname dan Password-nya)
