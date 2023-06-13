@@ -559,6 +559,21 @@ def main(page):
                 ft.ElevatedButton( 
                         content=ft.Column(
                             [
+                                ft.Icon(name=ft.icons.GROUP, size=100),
+                                ft.Text(value="Group Chat Realms", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=250,
+                        on_click=lambda _: page.go("/groupchatrealm"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
                                 ft.Icon(name=ft.icons.GROUPS, size=100),
                                 ft.Text(value="Create Group Chat", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
                             ],
@@ -625,7 +640,7 @@ def main(page):
                 ft.View(
                     "/privatechat",
                     [
-                        ft.AppBar(title=ft.Text("User Lists")),
+                        ft.AppBar(title=ft.Text("Active User Lists")),
                         ft.Card(
                             content=ChatList(page, cc.sessioncheck(), cc.username),
                         ),
@@ -667,18 +682,12 @@ def main(page):
             )
 
         elif temproute.match("/privatechatrealm/:realm_id"):
-            cr = ChatRoom(page, cc, cc.username, temproute.username)
-            
-            file_picker = ft.FilePicker()
-            page.overlay.append(file_picker)
-            page.update()
-
             page.views.append(
                 ft.View(
                     f"/privatechatrealm/{temproute.realm_id}",
                     [
                         ft.AppBar(
-                            title=ft.Text(f"User Lists in Realm {temproute.realm_id}"),
+                            title=ft.Text(f"Active User Lists in Realm {temproute.realm_id}"),
                         ),
                         ft.Card(
                             content=ChatList(page, cc.sessioncheck(), cc.username),
@@ -733,6 +742,54 @@ def main(page):
                     [
                         ft.AppBar(
                             title=ft.Text(f"Group Chat | {temproute.groupname}"),
+                        ),
+                        cr.lv,
+                        ft.Row([cr.chat, cr.send, cr.file_pick]),
+                    ],
+                )
+            )
+        
+        elif temproute.match("/groupchatrealm"):
+            page.views.append(
+                ft.View(
+                    "/groupchatrealm",
+                    [
+                        ft.AppBar(title=ft.Text("Realm Lists")),
+                        ft.Card(
+                            content=ChatList(page, cc.getrealms(), cc.username),
+                        ),
+                    ],
+                )
+            )
+        
+        elif temproute.match("/groupchatrealm/:realm_id"):
+            page.views.append(
+                ft.View(
+                    f"/privatechatrealm/{temproute.realm_id}",
+                    [
+                        ft.AppBar(
+                            title=ft.Text(f"Group Lists in Realm {temproute.realm_id}"),
+                        ),
+                        ft.Card(
+                            content=ChatList(page, cc.getgroups(), cc.username),
+                        ),
+                    ],
+                )
+            )
+            
+        elif temproute.match("/groupchatrealm/:realm_id/:groupname"):
+            cr = GroupChatRoom(page, cc, cc.username, temproute.groupname)
+            
+            file_picker = ft.FilePicker()
+            page.overlay.append(file_picker)
+            page.update()
+
+            page.views.append(
+                ft.View(
+                    f"/groupchatrealm/{temproute.realm_id}/{temproute.groupname}",
+                    [
+                        ft.AppBar(
+                            title=ft.Text(f"Group Chat | {temproute.groupname} in Realm {temproute.realm_id}"),
                         ),
                         cr.lv,
                         ft.Row([cr.chat, cr.send, cr.file_pick]),
