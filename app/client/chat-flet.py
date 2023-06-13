@@ -529,6 +529,21 @@ def main(page):
                 ft.ElevatedButton( 
                         content=ft.Column(
                             [
+                                ft.Icon(name=ft.icons.CHAT, size=100),
+                                ft.Text(value="Private Chat Realms", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=150,
+                        on_click=lambda _: page.go("/privatechatrealm"),
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
                                 ft.Icon(name=ft.icons.GROUP, size=100),
                                 ft.Text(value="Group Chats", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
                             ],
@@ -638,6 +653,60 @@ def main(page):
                 )
             )
         
+        elif temproute.match("/privatechatrealm"):
+            page.views.append(
+                ft.View(
+                    "/privatechatrealm",
+                    [
+                        ft.AppBar(title=ft.Text("Realm Lists")),
+                        ft.Card(
+                            content=ChatList(page, cc.getrealms(), cc.username),
+                        ),
+                    ],
+                )
+            )
+
+        elif temproute.match("/privatechatrealm/:realm_id"):
+            cr = ChatRoom(page, cc, cc.username, temproute.username)
+            
+            file_picker = ft.FilePicker()
+            page.overlay.append(file_picker)
+            page.update()
+
+            page.views.append(
+                ft.View(
+                    f"/privatechatrealm/{temproute.realm_id}",
+                    [
+                        ft.AppBar(
+                            title=ft.Text(f"User Lists in Realm {temproute.realm_id}"),
+                        ),
+                        ft.Card(
+                            content=ChatList(page, cc.sessioncheck(), cc.username),
+                        ),
+                    ],
+                )
+            )
+
+        elif temproute.match("/privatechatrealm/:realm_id/:username"):
+            cr = ChatRoom(page, cc, cc.username, temproute.username)
+            
+            file_picker = ft.FilePicker()
+            page.overlay.append(file_picker)
+            page.update()
+
+            page.views.append(
+                ft.View(
+                    f"/privatechatrealm/{temproute.realm_id}/{temproute.username}",
+                    [
+                        ft.AppBar(
+                            title=ft.Text(f"Private Chat with {temproute.username} in Realm {temproute.realm_id}"),
+                        ),
+                        cr.lv,
+                        ft.Row([cr.chat, cr.send, cr.file_pick]),
+                    ],
+                )
+            )
+        
         elif temproute.match("/groupchat"):
             page.views.append(
                 ft.View(
@@ -671,8 +740,6 @@ def main(page):
                 )
             )
         page.update()
-        
-        
         
         if page.route == "/chat":
             page.views.append(

@@ -13,7 +13,7 @@ class ChatClient:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print(TARGET_IP)
         print(TARGET_PORT)
-        self.server_address = (TARGET_IP,TARGET_PORT)
+        self.server_address = (TARGET_IP,int(TARGET_PORT))
         self.sock.connect(self.server_address)
         self.tokenid=""
         self.username = ""

@@ -143,6 +143,9 @@ class Chat:
                 return self.get_inbox_group(sessionid, username, groupname)
 
             # Realm-related
+            elif (command=='getrealms'):
+                return self.get_realms()
+            
             elif (command=='addrealm'):
                 realm_id = j[1].strip()
                 realm_address = j[2].strip()
@@ -839,6 +842,9 @@ class Chat:
             if 'fileid' in msg and msg['fileid']==fileid:
                 return {'status': 'OK', 'message': msg['filecontent']}
         return {'status': 'ERROR', 'message': 'File tidak ditemukan'}
+    
+    def get_realms(self):
+        return {"status": "OK", "message": self.realms}
     
     def get_groups(self):
         return {"status": "OK", "message": self.groups}

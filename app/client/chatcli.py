@@ -13,7 +13,7 @@ class ChatClient:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print(TARGET_IP)
         print(TARGET_PORT)
-        self.server_address = (TARGET_IP,TARGET_PORT)
+        self.server_address = (TARGET_IP,int(TARGET_PORT))
         self.sock.connect(self.server_address)
         self.tokenid=""
         self.username = ""
@@ -116,6 +116,9 @@ class ChatClient:
             
             elif command == "getgroups":
                 return self.getgroups()
+                    
+            elif command == "getrealms":
+                return self.getrealms()
             
             # File-related
             elif (command=='sendfile'):
@@ -288,6 +291,12 @@ class ChatClient:
             return "Error, {}" . format(result['message'])
 
     # Realm-related
+    def getrealms(self):
+        string = "getrealms {} \r\n"
+        result = self.sendstring(string)
+        if result["status"] == "OK":
+            return result["message"]
+        
     def addrealm(self, realm_id, realm_address, realm_port):
         if (self.tokenid==""):
             return "Error, not authorized"
