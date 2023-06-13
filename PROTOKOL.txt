@@ -1,0 +1,123 @@
+DOKUMEN PROTOKOL CHATTING APP SYSTEM KELOMPOK 4 PROGJAR C
+Autentikasi Pengguna
+1.1. Single Realm
+1.1.1. Perintah: auth <username> <password>
+1.1.2. Penggunaan: Autentikasi user
+1.1.3. Deskripsi: Perintah ini digunakan untuk mengautentikasi pengguna dengan menggunakan username dan password yang valid.
+
+1.2. Register
+1.2.1. Single Realm
+1.2.1.1. Perintah: register <nama yang dipisah dengan "-" > <negara> <username> <password>
+1.2.1.2. Penggunaan: Mendaftarkan akun pengguna baru
+1.2.1.3. Deskripsi: Perintah ini digunakan untuk mendaftarkan akun pengguna baru dengan mengisi informasi yang diperlukan seperti nama, negara, username, dan password.
+
+1.3. Logout
+1.3.1. Single Realm
+1.3.1.1. Perintah: logout
+1.3.1.2. Penggunaan: Mengeluarkan dari sesi chat
+1.3.1.3. Deskripsi: Perintah ini digunakan untuk keluar dari sesi chat dan mengakhiri koneksi dengan server.
+
+Multi-Realm
+2.1. Add Realm
+2.1.1. Perintah: addrealm <realm_id> <ip target> <port target>
+2.1.2. Penggunaan: Autentikasi user
+2.1.3. Deskripsi: Perintah ini digunakan untuk menambahkan realm baru dengan menyediakan realm_id, IP target, dan port target. Hal ini memungkinkan pengguna terhubung ke realm lain.
+
+2.2. Check Realm
+2.2.1. Perintah: checkrealm
+2.2.2. Penggunaan: Mengecek realm apa yang sedang terhubung dengan user
+2.2.3. Deskripsi: Perintah ini digunakan untuk memeriksa realm mana yang sedang terhubung dengan pengguna saat ini.
+
+Private Messaging
+3.1. Single Realm
+3.1.1. Send
+3.1.1.1. Perintah: send <username> <pesan>
+3.1.1.2. Penggunaan: Mengirimkan pesan ke user tertentu
+3.1.1.3. Deskripsi: Perintah ini digunakan untuk mengirimkan pesan pribadi ke pengguna lain dengan menentukan username tujuan dan isi pesan.
+
+3.1.2. Inbox
+    3.1.2.1. Perintah: inbox
+    3.1.2.2. Penggunaan: Membaca pesan masuk dari user lain
+    3.1.2.3. Deskripsi: Perintah ini digunakan untuk membaca pesan masuk dari pengguna lain dalam kotak masuk pengguna saat ini.
+3.2. Multi-Realm
+3.2.1. Send Realm
+3.2.1.1. Perintah: sendrealm <realm_id> <username> <pesan>
+3.2.1.2. Penggunaan: Mengirimkan pesan ke user tertentu di realm lain
+3.2.1.3. Deskripsi: Perintah ini digunakan untuk mengirimkan pesan pribadi ke pengguna lain di realm lain dengan menentukan realm_id, username tujuan, dan isi pesan.
+
+3.2.2. Inbox Realm
+    3.2.2.1. Perintah: inboxrealm <realm_id>
+    3.2.2.2. Penggunaan: Membaca pesan masuk dari user tertentu di realm lain
+    3.2.2.3. Deskripsi: Perintah ini digunakan untuk membaca pesan masuk dari pengguna tertentu di realm lain dengan menentukan realm_id pengguna tersebut.
+Group Messaging
+4.1. Single Realm
+4.1.1. Add Group
+4.1.1.1. Perintah: addgroup <groupname> <grouppassword>
+4.1.1.2. Penggunaan: Menambahkan grup baru
+4.1.1.3. Deskripsi: Perintah ini digunakan untuk menambahkan grup baru dengan menentukan nama grup dan password grup (opsional).
+
+4.1.2. Join Group
+    4.1.2.1. Perintah: joingroup <groupname> <grouppassword>
+    4.1.2.2. Penggunaan: Bergabung dengan grup tertentu
+    4.1.2.3. Deskripsi: Perintah ini digunakan untuk bergabung dengan grup tertentu dengan menentukan nama grup dan password grup (jika diperlukan).
+
+4.1.3. Send Group
+    4.1.3.1. Perintah: sendgroup <groupname> <pesan>
+    4.1.3.2. Penggunaan: Mengirimkan pesan ke grup tertentu
+    4.1.3.3. Deskripsi: Perintah ini digunakan untuk mengirimkan pesan ke grup tertentu dengan menentukan nama grup dan isi pesan.
+
+4.1.4. Inbox Group
+    4.1.4.1. Perintah: inboxgroup <groupname>
+    4.1.4.2. Penggunaan: Membaca pesan dalam grup
+    4.1.4.3. Deskripsi: Perintah ini digunakan untuk membaca pesan dalam grup tertentu dengan menentukan nama grup.
+4.2. Multi-Realm
+4.2.1. Send Group Realm
+4.2.1.1. Perintah: sendgrouprealm <realm_id> <groupname> <pesan>
+4.2.1.2. Penggunaan: Mengirimkan pesan ke grup tertentu di realm lain
+4.2.1.3. Deskripsi: Perintah ini digunakan untuk mengirimkan pesan ke grup tertentu di realm lain dengan menentukan realm_id, nama grup, dan isi pesan.
+
+4.2.2. Inbox Group Realm
+    4.2.2.1. Perintah: inboxgrouprealm <realm_id> <groupname>
+    4.2.2.2. Penggunaan: Membaca pesan dalam grup di realm lain
+    4.2.2.3. Deskripsi: Perintah ini digunakan untuk membaca pesan dalam grup tertentu di realm lain dengan menentukan realm_id dan nama grup.
+Send dan Receive File
+5.1. Single Realm
+5.1.1. Send File
+5.1.1.1. Perintah: sendfile <username> <filepath>
+5.1.1.2. Penggunaan: Mengirimkan file ke user
+5.1.1.3. Deskripsi: Perintah ini digunakan untuk mengirimkan file ke pengguna lain dengan menentukan username tujuan dan path file yang akan dikirim.
+
+5.1.2. Download File
+    5.1.2.1. Perintah: downloadfile <file_id> <file_name> <direktori penyimpanan>
+    5.1.2.2. Penggunaan: Mengunduh file ke user
+    5.1.2.3. Deskripsi: Perintah ini digunakan untuk mengunduh file dari server dengan menentukan file_id, nama file, dan direktori penyimpanan.
+
+5.1.3. Send Group File
+    5.1.3.1. Perintah: sendgroupfile <groupname> <filepath>
+    5.1.3.2. Penggunaan: Mengirimkan file ke group
+    5.1.3.3. Deskripsi: Perintah ini digunakan untuk mengirimkan file ke grup tertentu dengan menentukan nama grup dan path file yang akan dikirim.
+
+5.1.4. Download File
+    5.1.4.1. Perintah: downloadgroupfile <group_name> <file_id> <file_name> <direktori penyimpanan>
+    5.1.4.2. Penggunaan: Mengunduh file ke group
+    5.1.4.3. Deskripsi: Perintah ini digunakan untuk mengunduh file dari grup dengan menentukan nama grup, file_id, nama file, dan direktori penyimpanan.
+5.2. Multi-Realm
+5.2.1. Send Realm File
+5.2.1.1. Perintah: sendrealmfile <realm_id> <username> <filepath>
+5.2.1.2. Penggunaan: Mengirimkan file ke user dalam realm tertentu
+5.2.1.3. Deskripsi: Perintah ini digunakan untuk mengirimkan file ke pengguna lain dalam realm tertentu dengan menentukan realm_id, username tujuan, dan path file yang akan dikirim.
+
+5.2.2. Download Realm File
+    5.2.2.1. Perintah: downloadrealmfile <realm_id> <file_id> <file_name> <direktori penyimpanan>
+    5.2.2.2. Penggunaan: Mengunduh file ke user dalam realm tertentu
+    5.2.2.3. Deskripsi: Perintah ini digunakan untuk mengunduh file dari pengguna lain dalam realm tertentu dengan menentukan realm_id, file_id, nama file, dan direktori penyimpanan.
+
+5.2.3. Send Realm Group File
+    5.2.3.1. Perintah: sendgrouprealmfile <realm_id> <groupname> <filepath>
+    5.2.3.2. Penggunaan: Mengirimkan file ke group dalam realm tertentu
+    5.2.3.3. Deskripsi: Perintah ini digunakan untuk mengirimkan file ke grup tertentu dalam realm tertentu dengan menentukan realm_id, nama grup, dan path file yang akan dikirim.
+
+5.2.4. Download Realm File
+    5.2.4.1. Perintah: downloadgrouprealmfile <realm_id> <group_name> <file_id> <file_name> <direktori penyimpanan>
+    5.2.4.2. Penggunaan: Mengunduh file ke group dalam realm tertentu
+    5.2.4.3. Deskripsi: Perintah ini digunakan untuk mengunduh file dari grup tertentu dalam realm tertentu dengan menentukan realm_id, nama grup, file_id, nama file, dan direktori penyimpanan.
