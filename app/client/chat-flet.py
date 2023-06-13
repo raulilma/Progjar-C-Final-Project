@@ -248,6 +248,32 @@ def main(page):
             actions_alignment="end",
         )
     
+    def createrealm_dialog():
+        global createrealm
+        
+        def createrealm(e):
+            page.dialog.title=ft.Text(
+                "Connect Realm", style=ft.TextThemeStyle.TITLE_MEDIUM
+            )
+            page.dialog.actions=[
+                ft.ElevatedButton("Submit!" ,width=100,height=30, on_click=createrealm_click)
+            ]
+            page.dialog.content=ft.Column([realm_id, realm_ip, realm_port], tight=True)
+            page.update()
+
+        page.dialog = ft.AlertDialog(
+            open=not is_login,
+            modal=True,
+            title=ft.Text(
+                "Connect Realm", style=ft.TextThemeStyle.TITLE_MEDIUM
+            ),
+            content=ft.Column([realm_id, realm_ip, realm_port], tight=True),
+            actions=[
+                ft.ElevatedButton("Connect!",width=200,height=30, on_click=createrealm_click)
+            ],
+            actions_alignment="end",
+        )
+        
     def creategroup_dialog():
         global creategroup
         
@@ -300,6 +326,47 @@ def main(page):
             actions_alignment="end",
         )
     
+    def createrealm_click(e):
+        if not realm_id.value:
+            realm_id.error_text = "Enter a valid realm id."
+            realm_id.update()
+        else :
+            realm_id.error_text = ""
+            realm_id.update()
+
+        if not realm_ip.value:
+            realm_ip.error_text = "You need to enter the realm ip address."
+            realm_ip.update()
+        else :
+            realm_ip.error_text = ""
+            realm_ip.update()
+
+        if not realm_port.value:
+            realm_port.error_text = "You need to enter the realm ip address."
+            realm_port.update()
+        else :
+            realm_port.error_text = ""
+            realm_port.update()
+
+        if realm_id.value != "" and realm_ip.value != "" and realm_port != "":
+            newrealm = cc.addrealm(realm_id.value, realm_ip.value, realm_port.value)
+
+            if "Error" in newrealm:
+                realm_id.error_text = "Failed on Connecting Realm :("
+                realm_id.update()
+
+            else:
+                realm_id.value = ""
+                realm_ip.value = ""
+                realm_port.value = ""
+                realm_id.error_text = ""
+                realm_ip.error_text = ""
+                realm_port.error_text = ""
+                page.update()
+                page.dialog.open = False
+                
+            page.update()
+            
     def creategroup_click(e):
         if not groupname.value:
             groupname.error_text = "Enter a valid groupname."
@@ -364,6 +431,10 @@ def main(page):
                 
             page.update()
     
+    def open_createrealm(e):
+        createrealm_dialog()
+        page.update()
+        
     def open_creategroup(e):
         creategroup_dialog()
         page.update()
@@ -487,6 +558,10 @@ def main(page):
         on_submit=joingroup_click,
     )
     
+    realm_id = ft.TextField(label="Realm ID", autofocus=True)
+    realm_ip = ft.TextField(label="Realm IP", autofocus=True)
+    realm_port = ft.TextField(label="Realm Port", autofocus=True)
+    
     login_dialog()
 
     def btn_click(e):
@@ -598,6 +673,21 @@ def main(page):
                         width=250,
                         height=250,
                         on_click=open_joingroup,
+                        style=ft.ButtonStyle(
+                            shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
+                        )
+                    ),
+                ft.ElevatedButton( 
+                        content=ft.Column(
+                            [
+                                ft.Icon(name=ft.icons.BROADCAST_ON_HOME, size=100),
+                                ft.Text(value="Add Realm", text_align=ft.TextAlign.CENTER, style=ft.TextThemeStyle.TITLE_MEDIUM)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        ),
+                        width=250,
+                        on_click=open_createrealm,
                         style=ft.ButtonStyle(
                             shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=2)}
                         )
